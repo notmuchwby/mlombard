@@ -32,7 +32,7 @@ class authController {
             const hashPassword = bcrypt.hashSync(password, 6)
             const userRole = role
 
-            const user = new User({ username, password: hashPassword, role: userRole })
+            const user = new User({id: req.body.id, username, password: hashPassword, role: userRole })
             await user.save()
             return res.json({message: "Пользователь успешно зарегестрирован"})
 

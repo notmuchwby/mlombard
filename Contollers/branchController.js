@@ -26,7 +26,7 @@ class branchController {
             const branch = new Branch({ name, address, workHours, smallImage, image, owner: req.owner })
             await branch.save()
 
-            return res.json({message: "Филиал успешно создан"})
+            return res.status(200).json({branch})
         } catch(e) {
             console.log(e)
             res.status(400).json({message: "Ошибка загрузки филиала"})     
@@ -46,17 +46,73 @@ class branchController {
             const username = req.username
             const userFound = await Branch.findOne({_id: req.params.id})
             console.log(req.params.id)
-            
 
-            if(role === "USER" && username === userFound.owner) {
-                const branch = new Branch({ name, address, workHours, smallImage, image, owner: userFound.owner })
-                const updatedBranch = await Branch.findByIdAndUpdate(req.params.id, branch, {new: true})
+            if((role === "USER" && username === userFound.owner) || (role === "ADMIN" || role === "MODERATOR")) {
+                const branchUpdate = {name, address, workHours, smallImage, image, owner: userFound.owner }
+                const updatedBranch = await Branch.findByIdAndUpdate(req.params.id, branchUpdate, {new: true})
                 return res.status(200).json(updatedBranch)
             }
 
         } catch(e) {
             console.log(e)
             res.status(400).json({message: "Ошибка при редактировании филиалаr"})
+        }
+    }
+
+    // Удаление филиала
+    async remove(req, res) {
+        try {
+            const errors = validationResult(req)
+            if(!errors.isEmpty()) {
+                return res.status(400).json({message: "Ошибка при удалении филиала", errors})
+            }
+            
+            const username = req.username
+            const userFound = await Branch.findOne({_id: req.params.id})
+            const role = req.role
+
+            if((role === "USER" && username === userFound.owner) || (role === "ADMIN" || role === "MODERATOR")) {
+                const branch = await Branch.findById(req.params.id)
+                await branch.remove()
+                return res.status(204).json({message: "Филиал успешно удален"})
+            } else {
+                return res.status(400).json({message: "Пользователь не может удалять филиал"})
+            }                      
+
+        } catch(e) {
+            console.log(e)
+            res.status(400).json({message: "Ошибка при удалении филиалаr"})
+        }
+    }
+
+    // Показ филиалов
+    async getBranches(req, res) { 
+        try {
+            const errors = validationResult(req)
+            if(!errors.isEmpty()) {
+                return res.status(400).json({message: "Ошибка при получении филиалов", errors})
+            }
+
+            const username = req.username
+            const userFound = await Branch.findOne({owner: username})
+            const role = req.role
+           
+
+            if(role === "USER" && username === userFound.owner) {
+                const branches = await Branch.find({owner: userFound.owner})
+                return res.status(200).json({ branches })
+            }
+
+            if(role === "ADMIN" || role === "MODERATOR") {
+                const branches = await Branch.find()
+                return res.status(200).json({ branches })
+            }
+
+            
+
+        } catch(e) {
+            console.log(e)
+            res.status(400).json({message: "Ошибка при получении филиалов"})       
         }
     }
 }
