@@ -1,4 +1,3 @@
-const Role = require('../Models/Role')
 const User = require('../Models/User')
 const Branch = require('../Models/Branch')
 const bcrypt = require('bcryptjs')
@@ -6,10 +5,10 @@ const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const { secret } = require('../config')
 
-const generateAccessToken = (id, roles) => {
+const generateAccessToken = (id, role) => {
     const payload = {
         id,
-        roles
+        role
     }
 
     return jwt.sign(payload, secret)
@@ -23,7 +22,7 @@ class authController {
                 return res.status(400).json({message: "Ошибка при регистрации", errors})
             }
 
-            const { username, password } = req.body
+            const { username, password, role } = req.body
             const candidate = await User.findOne({username})
 
             if(candidate) {
@@ -31,9 +30,9 @@ class authController {
             }
 
             const hashPassword = bcrypt.hashSync(password, 6)
-            const userRole = await Role.findOne({value: "USER"})
+            const userRole = role
 
-            const user = new User({username, password: hashPassword, roles: [userRole.value]})
+            const user = new User({ username, password: hashPassword, role: userRole })
             await user.save()
             return res.json({message: "Пользователь успешно зарегестрирован"})
 
@@ -45,7 +44,8 @@ class authController {
     
     async login(req, res) {
          try {
-            const {username, password} = req.body
+
+            const {username, password, role} = req.body
             const user = await User.findOne({ username })
             if(!user) {
                 return res.status(400).json({message: `Пользователь ${username} не найден`})
@@ -55,7 +55,7 @@ class authController {
                 return res.status(400).json({message: 'Введен неверный пароль'})
             }
 
-            const token = generateAccessToken(user._id, user.roles)
+            const token = generateAccessToken(user._id, role)
             return res.json({token})
 
         } catch(e) {

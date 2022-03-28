@@ -10,7 +10,7 @@ module.exports = function() {
    
         try {
            const token = req.headers.authorization.split(' ')[1]
-           
+          
            if(!token) {
                return res.status(400).json({message: "Пользователь не авторизирован"})
            } 
@@ -20,12 +20,10 @@ module.exports = function() {
            const id = role.id
            const userFound = await User.findOne({_id: id })
            console.log(userFound.role)
-           
-           if(!userFound) {
-               return res.status(403).json({message: "У вас нет доступа"})
-           }
-           
-           req.owner = userFound.username
+
+        
+           req.role  = userFound.role
+           req.username = userFound.username
            console.log(userFound.username)
            next()
         } catch(e) {

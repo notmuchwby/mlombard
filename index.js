@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000
 const app = express()
 
 app.use(express.json())
-app.use("/auth", authRouter)
+app.use("/", authRouter)
 
 app.listen(PORT, async () => {
     // Don't think this is the right place to connect to the database.
