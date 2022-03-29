@@ -9,6 +9,7 @@ const uploadMiddleware = require('../Middlewares/uploadMiddleware')
 const editMiddleware = require('../Middlewares/editMiddleware')
 const removeMiddleware = require('../Middlewares/removeMiddleware')
 const getBranchMiddleware = require('../Middlewares/getBranchMiddleware')
+const roleChangeMiddleware = require('../Middlewares/roleChangeMiddleware')
 
 // Router for user registration
 router.post('/registration', check('username', "Имя пользователя не может быть пустым").notEmpty(),
@@ -30,7 +31,10 @@ router.delete('/delete-branch/:id', removeMiddleware(), branchController.remove)
 // Router for editing a branch
 router.put('/edit-branch/:id', editMiddleware(), branchController.edit)
 
-// ADMIN ROUTER for changing roles and blocking branches for editing 
+// ADMIN ROUTER for changing roles 
+router.put('/change-role/:id', roleChangeMiddleware(), branchController.changeRole)
+
+// ADMIN ROUTER for blocking branches for editing 
 
 
 //////////////////////////////////////////////////////////

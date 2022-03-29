@@ -1,17 +1,20 @@
 const mongoose = require('mongoose')
 
+
 const BranchSchema = new mongoose.Schema({
     name: {
         type: String,
         unique: true,
         required: true,
         maxLength: 128,
+        match: [/\p{L}/u, "Название филиала не должно содержать символов"]
     },
     address: {
         type: String,
         unique: true,
         required: true,
         maxLength: 128,
+        match: [/\p{L}/u, "Адрес филиала не должно содержать символов"]
     },
     workHours: {
         type: String,

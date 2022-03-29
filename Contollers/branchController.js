@@ -108,11 +108,33 @@ class branchController {
                 return res.status(200).json({ branches })
             }
 
-            
-
         } catch(e) {
             console.log(e)
             res.status(400).json({message: "Ошибка при получении филиалов"})       
+        }
+    }
+
+    // Изменение роли пользователей администратором 
+    async changeRole(req, res) {
+        try{
+            const errors = validationResult(req)
+            if(!errors.isEmpty()) {
+                return res.status(400).json({message: "Ошибка при изменении роли пользователя", errors})
+            }
+
+            const admin = req.admin
+            const userFound = await User.findOne({_id: req.params.id})
+            
+            if(admin.role === "ADMIN" && userFound) {
+                const updatedUser = await User.findByIdAndUpdate(req.params.id, {role: req.body.role}, {new: true})
+                return res.status(200).json({ updatedUser })
+            } else {
+                return res.status(400).json({message: "Данный пользователь не может изменять роль"})
+            }
+
+        } catch(e) {
+            console.log(e)
+            res.status(400).json({message: "Ошибка при изменении роли"})             
         }
     }
 }
