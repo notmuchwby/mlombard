@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-
 const BranchSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -32,6 +31,14 @@ const BranchSchema = new mongoose.Schema({
     }, 
     owner: {
         type: String,
+        required: true
+    }, 
+    canEditStartTime: {
+        type: Number,
+        required: true
+    },
+    canEditEndTime: {
+        type: Number,
         required: true
     }
 })

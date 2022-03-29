@@ -10,6 +10,7 @@ const editMiddleware = require('../Middlewares/editMiddleware')
 const removeMiddleware = require('../Middlewares/removeMiddleware')
 const getBranchMiddleware = require('../Middlewares/getBranchMiddleware')
 const roleChangeMiddleware = require('../Middlewares/roleChangeMiddleware')
+const blockEditMiddleware = require('../Middlewares/blockEditMiddleware')
 
 // Router for user registration
 router.post('/registration', check('username', "Имя пользователя не может быть пустым").notEmpty(),
@@ -35,7 +36,7 @@ router.put('/edit-branch/:id', editMiddleware(), branchController.edit)
 router.put('/change-role/:id', roleChangeMiddleware(), branchController.changeRole)
 
 // ADMIN ROUTER for blocking branches for editing 
-
+router.put('/block-edit/:id', blockEditMiddleware(), branchController.editTimeChange)
 
 //////////////////////////////////////////////////////////
 router.get('/users', roleMiddleware(), controller.getUsers)
