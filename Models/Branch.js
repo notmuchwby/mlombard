@@ -13,7 +13,7 @@ const BranchSchema = new mongoose.Schema({
         unique: true,
         required: true,
         maxLength: 128,
-        match: [/\p{L}/u, "Адрес филиала не должно содержать символов"]
+        match: [/\p{L}/u, "Адрес филиала не должен содержать символов"]
     },
     workHours: {
         type: String,
