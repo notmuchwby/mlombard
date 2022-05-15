@@ -13,7 +13,7 @@ const generateAccessToken = (id, role) => {
 
     return jwt.sign(payload, secret)
 }
-
+// test test
 class authController {
     async registration(req, res ) {
         try {
